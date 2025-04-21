@@ -1,7 +1,7 @@
 import React, { useContext } from "react";
 
 import { useNavigate } from "react-router-dom";
-import AppContextProvider, { AppContext } from "./AppContext";
+import AppContextProvider, { AppContext } from "../context/AppContext.jsx";
 
 const TopDoctors = () => {
     const navigate=useNavigate();

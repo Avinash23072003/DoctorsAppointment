@@ -1,6 +1,6 @@
 import React, { useContext } from 'react'
 import { useState,useEffect } from 'react'
-import { AppContext } from './AppContext';
+import { AppContext } from '../context/AppContext';
 import { useNavigate } from 'react-router-dom';
 const OtherRelatedDoc = ({speciality,docId}) => {
     const [relDoc,setRelDoc]=useState([]);
