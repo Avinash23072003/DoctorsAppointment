@@ -3,7 +3,7 @@ import path from 'path';
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, 'uploads/'); // create this folder
+    cb(null, 'uploads/'); // Make sure this folder exists
   },
   filename: function (req, file, cb) {
     const ext = path.extname(file.originalname);
@@ -11,6 +11,7 @@ const storage = multer.diskStorage({
   }
 });
 
+// ✅ Use your defined disk storage
 const upload = multer({ storage });
 
 export default upload;

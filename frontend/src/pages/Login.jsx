@@ -24,7 +24,7 @@ const navigate=useNavigate();
           email
         });
 
-        if (data.sucess) {
+        if (data.success) {
           localStorage.setItem('token', data.token);
           setToken(data.token);
           toast.success('User registration successful');

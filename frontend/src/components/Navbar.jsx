@@ -6,7 +6,7 @@ import { AppContext } from "../context/AppContext";
 const Navbar = () => {
     const navigate=useNavigate();
     const[showMenu,setShowMenu]=useState(false);
-   const {token,setToken}=useContext(AppContext)
+   const {token,setToken,userData}=useContext(AppContext)
 
    const logOut=()=>{
     setToken(false);
@@ -44,9 +44,9 @@ const Navbar = () => {
         {/* Create Account Button */}
         <div className="flex items-center">
         {
-        token ? 
+        token  && userData ? 
         <div className="flex items-center gap-2 cursor-pointer group relative ">
-            <img className="w-10 rounded-full"src={assets.profile_pic}/>
+            <img className="w-10 rounded-full"src={userData.image}/>
             <img  className="w-2.5 "src={assets.dropdown_icon}/>
             <div className="absolute top-0 right-0 pt-14 text-base text-black-300 font-medium z-20 hidden group-hover:block">
                 <div className="min-w-44 rounded flex flex-col bg-stone-100  gap-2 p-2">
