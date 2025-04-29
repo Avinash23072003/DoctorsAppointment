@@ -8,6 +8,10 @@ const AdminContextProvider = (props) => {
   const [aToken,setAToken]=useState(localStorage.getItem('aToken')?localStorage.getItem('aToken'):'');
   const backEndUrl=import.meta.env.VITE_BACKEND_URL;
 const [doctors,setDoctors]=useState([])
+const [appointments,setAppointments]=useState([]);
+const [appoint,setAppoint]=useState([]);
+const [dashBoardData, setDashData] = useState(false);
+
  
 
 const getAllDoctors = async () => {
@@ -57,9 +61,64 @@ const changeAvailability=async(docId)=>{
     console.log(error);
   }
 }
+
+
+const getAppointmentData=async()=>{
+  try{
+
+    const {data}= await axios.get(backEndUrl+'/api/admin/get-appointments',{ headers: { aToken } });
+    if(data.success){
+      setAppointments(data.appointments)
+      console.log(data)
+    }else{
+      toast.error(data.message)
+    }
+  } catch(error){
+    console.log(error);
+    toast.error(error.message)
+  }
+}
+
+const cancelAppointment=async(appointmentId)=>{
+  try{
+    const {data}=await axios.post(backEndUrl+'/api/admin/cancel-appointment',{appointmentId},{ headers: { aToken }});
+    if(data.success){
+      toast.success("Appointment cancelled");
+      getAppointmentData();
+    }
+    else{
+      toast.error(data.message);
+    }
+
+
+  }catch(error){
+    console.log(error);
+    toast.error(error.message)
+  }
+
+}
+
+const getDashData=async()=>{
+  try{
+    const {data}=await axios.get(backEndUrl+'/api/admin/appointment-dashboard',{headers: { aToken }});
+    if(data.success){
+      setDashData(data.dashBoardData);
+      console.log(data.dashBoardData);
+    }else{
+      toast.error(data.message)
+    }
+  }catch(error){
+    console.log(error);
+    toast.error(error.message)
+  }
+
+
+}
   const value = {
     aToken,setAToken,
-    backEndUrl,doctors,getAllDoctors,changeAvailability
+    backEndUrl,doctors,getAllDoctors,changeAvailability,appointments,setAppointments,
+    getAppointmentData,cancelAppointment,getDashData,dashBoardData
+
   };
 
   return (
@@ -68,5 +127,6 @@ const changeAvailability=async(docId)=>{
     </AdminContext.Provider>
   );
 };
+
 
 export default AdminContextProvider;
