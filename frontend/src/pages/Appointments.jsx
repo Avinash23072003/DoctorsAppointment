@@ -21,6 +21,7 @@ const Appointments = () => {
   const fetchInfo = () => {
     const doctor = doctors.find((doc) => doc._id === docId);
     setDocInfo(doctor);
+  
   };
 
   const getAvailableSlot = () => {
@@ -70,9 +71,14 @@ const Appointments = () => {
   };
 
   const bookAppointment = async () => {
+    const doctor = doctors.find((doc) => doc._id === docId);
     if (!token) {
       toast.warn("Login to book appointment");
       return navigate("/login");
+    }
+    if (doctor && doctor.available === false) {
+      toast.warn("Doctor is not available for booking");
+      return navigate("/doctors"); // ✅ Return to exit function early
     }
 
     try {
@@ -115,7 +121,11 @@ const Appointments = () => {
 
   useEffect(() => {
     fetchInfo();
+
     getAvailableSlot();
+    if (doctors && doctors.available === false) {
+      toast.warn("Doctor is not available");
+    }
   }, [doctors, docId]);
 
   return (

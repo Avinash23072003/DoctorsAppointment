@@ -2,12 +2,12 @@ import React, { useContext, useEffect, useState } from "react";
 import { AppContext } from "../context/AppContext.jsx";
 import { toast } from "react-toastify";
 import axios from "axios";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 
 const MyAppointments = () => {
-  const { backendURL, token,getDoctorData } = useContext(AppContext);
+  const { backendURL, token, getDoctorData } = useContext(AppContext);
   const [appointments, setAppointments] = useState([]);
-const navigate=useNavigate();
+  const navigate = useNavigate();
   const months = [
     "",
     "Jan",
@@ -73,7 +73,7 @@ const navigate=useNavigate();
           },
         }
       );
-     
+
       if (data.success) {
         toast.success(data.message);
         getUserAppointments();
@@ -86,64 +86,63 @@ const navigate=useNavigate();
     }
   };
 
-const initPayment=async(order)=>{
-  const option={
-    key:import.meta.env.VITE_RAZORPAY_ID,
-    amount:order.amount,
-    currency:order.currency,
-    name:"Appintment payment",
-    description:"Payment Integration",
-    order_id:order.id,
-    
-    handler:async(response)=>{
-      console.log(response)
+  const initPayment = async (order) => {
+    const option = {
+      key: import.meta.env.VITE_RAZORPAY_ID,
+      amount: order.amount,
+      currency: order.currency,
+      name: "Appintment payment",
+      description: "Payment Integration",
+      order_id: order.id,
 
-      try{
-        const {data}=await axios.post(backendURL + "/api/users/verify-razorpay",
-          response,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          })
-          if(data.success){
+      handler: async (response) => {
+        console.log(response);
+
+        try {
+          const { data } = await axios.post(
+            backendURL + "/api/users/verify-razorpay",
+            response,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+          if (data.success) {
             getUserAppointments();
-            navigate('/my-appointments')
+            navigate("/my-appointments");
           }
-
-      } catch (error) {
-        console.log(error);
-        toast.error(error.message);
-      }
-    }
-
-  }
-  const rzp=new window.Razorpay(option)
-  rzp.open();
-}
+        } catch (error) {
+          console.log(error);
+          toast.error(error.message);
+        }
+      },
+    };
+    const rzp = new window.Razorpay(option);
+    rzp.open();
+  };
   const onlinePayment = async (appointmentId) => {
     try {
       const { data } = await axios.post(
-        backendURL + '/api/users/payment-razorpay',
+        backendURL + "/api/users/payment-razorpay",
         { appointmentId },
         {
           headers: {
-            Authorization: `Bearer ${token}`
+            Authorization: `Bearer ${token}`,
           },
         }
       );
-  
+
       if (data.success) {
         toast.success(data.message); // ✅ correct way to use toast.success
-        initPayment(data.order);      // ✅ order details
+        initPayment(data.order); // ✅ order details
       }
-  
     } catch (error) {
       console.log(error);
       toast.error(error.message); // ✅ error toast
     }
   };
-  
+
   return (
     <div classname="p-4">
       <p className="pt-24 text-center text-2xl">My Appointment</p>
@@ -171,16 +170,21 @@ const initPayment=async(order)=>{
           </div>
 
           <div className="flex flex-col gap-6 justify-end">
-            {!item.cancelled && item.payment && ( <button className="text-sm text-white text-center sm:min-w-48 py-2 border rounded bg-green-500  hover:text-white cursor-pointer">
-               Paid
-              </button>)}
-            {!item.cancelled && !item.payment &&  (
-              <button className="text-sm text-blue-400 text-center sm:min-w-48 py-2 border rounded- hover:bg-blue-500  hover:text-white cursor-pointer" onClick={()=>onlinePayment(item._id)}>
+            {!item.cancelled && item.payment && !item.isComplete && (
+              <button className="text-sm text-white text-center sm:min-w-48 py-2 border rounded bg-green-500  hover:text-white cursor-pointer">
+                Paid
+              </button>
+            )}
+            {!item.cancelled && !item.payment &&  !item.isComplete &&(
+              <button
+                className="text-sm text-blue-400 text-center sm:min-w-48 py-2 border rounded- hover:bg-blue-500  hover:text-white cursor-pointer"
+                onClick={() => onlinePayment(item._id)}
+              >
                 Pay Online
               </button>
             )}
 
-            {!item.cancelled && (
+            {!item.cancelled &&  !item.isComplete && (
               <button
                 className="text-sm   text-center sm:min-w-48 py-2  border border-red-500  rounded text-red-400 hover:bg-red-700 hover:text-white  cursor-pointer"
                 onClick={() => cancelledAppointment(item._id)}
@@ -188,7 +192,12 @@ const initPayment=async(order)=>{
                 Cancel Appointment
               </button>
             )}
-            {item.cancelled && <button className="sm:min w-48 py-2 border border-red-500  rounded text-red-400 cursor-pointer">Appointment Cancelled</button>}
+            {item.cancelled  &&  !item.isComplete && (
+              <button className="sm:min w-48 py-2 border border-red-500  rounded text-red-400 cursor-pointer">
+                Appointment Cancelled
+              </button>
+            )}
+            {item.isComplete && <button className="sm:min w-48 py-2 border border-green-500  rounded text-green-400 cursor-pointer">Completed</button> }
           </div>
         </div>
       ))}

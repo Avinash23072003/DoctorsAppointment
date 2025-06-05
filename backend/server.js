@@ -20,7 +20,6 @@ app.get('/',(req,res)=>{
 })
 app.use(cors({
     origin: ['http://localhost:5173', 'http://localhost:5174'],
-    credentials: true,
   }));
 // localhost:4000/api/admin/addDoctor
 app.use((req, res, next) => {

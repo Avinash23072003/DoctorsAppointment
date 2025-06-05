@@ -1,42 +1,72 @@
-import React, { useContext, useState } from 'react';
-import { assets } from '../assets/assets_admin/assets';
-import { AdminContext } from '../context/AdminContext';
-import axios from 'axios';
-import { toast } from 'react-toastify';
+import React, { useContext, useState, useEffect } from "react";
+import { AdminContext } from "../context/AdminContext";
+import { DoctorContext } from "../context/DoctorContext";
+import axios from "axios";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
-  const [state, setState] = useState('Admin');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [state, setState] = useState("Admin");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
   const { setAToken, backEndUrl } = useContext(AdminContext);
+  const { setDToken } = useContext(DoctorContext);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const token = localStorage.getItem("aToken");
+    if (token) {
+      setAToken(token);
+      navigate("/admin-dashboard");
+    }
+  }, [navigate, setAToken]);
 
   const onSubmitHandler = async (event) => {
     event.preventDefault();
 
     if (!email || !password) {
-      alert('Please enter both email and password');
+      toast.error("Please enter both email and password");
       return;
     }
 
     try {
-      const endpoint = state === 'Admin' ? '/api/admin/login' : '/api/doctor/login';
-      const { data } = await axios.post(`${backEndUrl}${endpoint}`, { email, password });
-
-      console.log(data);
-
-      if (data.sucess) {
-        localStorage.setItem('aToken', data.token);
-        setAToken(data.token);
-        toast.success(data.message)
-        // You can redirect to dashboard here if needed
-        console.log("login sucessful")
+      if (state === "Admin") {
+        const { data } = await axios.post(`${backEndUrl}/api/admin/login`, {
+          email,
+          password,
+        });
+         console.log(data);
+        if (data.sucess && data.token) {
+          localStorage.setItem("aToken", data.token);
+          setAToken(data.token);
+          axios.defaults.headers.common["Authorization"] = `Bearer ${data.token}`;
+          toast.success(data.message || "Admin login successful");
+          navigate("/admin-dashboard");
+        } else {
+          toast.error(data.message || "Admin login failed");
+        }
       } else {
-        alert(`${state} login failed`);
-        toast.error(data.message)
+        const { data } = await axios.post(`${backEndUrl}/api/doctor/login`, {
+          email,
+          password,
+        });
+
+        if (data.success && data.token) {
+          localStorage.setItem("dToken", data.token);
+
+          setDToken(data.token);
+          console.log(data.token)
+          axios.defaults.headers.common["Authorization"] = `Bearer ${data.token}`;
+          toast.success(data.message || "Doctor login successful");
+          navigate("/doctor-dashboard");
+        } else {
+          toast.error(data.message || "Doctor login failed");
+        }
       }
     } catch (error) {
       console.error(`${state} login error:`, error);
-      alert('Something went wrong. Please try again.');
+      toast.error("Something went wrong. Please try again.");
     }
   };
 
@@ -81,11 +111,11 @@ const Login = () => {
           Login
         </button>
 
-        {state === 'Admin' ? (
+        {state === "Admin" ? (
           <p>
-            Doctor login?{' '}
+            Doctor login?{" "}
             <span
-              onClick={() => setState('Doctor')}
+              onClick={() => setState("Doctor")}
               className="text-blue-400 cursor-pointer underline"
             >
               Click Here
@@ -93,9 +123,9 @@ const Login = () => {
           </p>
         ) : (
           <p>
-            Admin login?{' '}
+            Admin login?{" "}
             <span
-              onClick={() => setState('Admin')}
+              onClick={() => setState("Admin")}
               className="text-blue-400 cursor-pointer underline"
             >
               Click Here

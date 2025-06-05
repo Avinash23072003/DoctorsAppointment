@@ -3,7 +3,8 @@ import { AdminContext } from "../../context/AdminContext.jsx";
 import { AppContext } from "../../context/AppContext.jsx";
 
 const AllAppointment = () => {
-  const { aToken, appointments, getAppointmentData ,cancelAppointment} = useContext(AdminContext);
+  const { aToken, appointments, getAppointmentData, cancelAppointment } =
+    useContext(AdminContext);
   const { calculateAge, slotDateFormat } = useContext(AppContext);
 
   useEffect(() => {
@@ -17,7 +18,6 @@ const AllAppointment = () => {
       <p className="mb-3 text-lg font-semibold text-center">All Appointments</p>
 
       <div className="bg-white border rounded text-sm max-h-[80vh] min-h-[60vh] overflow-y-scroll shadow-lg">
-
         {/* Table Header */}
         <div className="hidden sm:grid grid-cols-[0.5fr_1fr_0.8fr_1.4fr_1fr_1fr_1fr] p-4 border-b bg-gray-100 font-semibold text-gray-600 gap-4">
           <p>#</p>
@@ -71,15 +71,15 @@ const AllAppointment = () => {
 
             {/* Actions */}
             <div>
-              {item.cancelled ? (
-                <span className="text-red-500 font-medium">Cancelled</span>
-              ) : (
-                <span onClick={()=>cancelAppointment(item._id)}className="cursor-pointer text-green-500 font-medium">Active</span>
-              )}
+              {item.cancelled ? 
+                <p className="text-red-500 font-medium">Cancelled</p>
+               : item.isComplete ? 
+                <p className="text-green-500 font-medium">Completed</p>
+                :<img onClick={()=>cancelAppointment(item._id)} className="w-10 cursor-pointer"/>
+              }
             </div>
           </div>
         ))}
-        
       </div>
     </div>
   );

@@ -162,7 +162,7 @@ const {backEndUrl, aToken}=useContext(AdminContext)
         <div className="mt-6 text-center sm:text-right">
           <button
             type="submit"
-            className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition"
+            className="cursor-pointer bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition"
           >
             Add Doctor
           </button>
