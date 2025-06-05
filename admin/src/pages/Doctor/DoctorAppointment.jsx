@@ -31,7 +31,7 @@ const DoctorAppointment = () => {
           <p>Action</p>
         </div>
 
-        {appointments.map((item, index) => (
+        {appointments?.slice().reverse().map((item, index) => (
           <div
             key={index}
             className="md:grid md:grid-cols-[0.5fr_2fr_1fr_1fr_3fr_1fr_1fr] md:items-center md:gap-3 md:px-4 md:py-3 md:border-b
