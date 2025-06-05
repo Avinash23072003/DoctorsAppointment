@@ -1,6 +1,7 @@
 import React, { useEffect, useContext } from "react";
 import { AdminContext } from "../../context/AdminContext.jsx";
 import { AppContext } from "../../context/AppContext.jsx";
+import { assets } from "../../assets/assets_admin/assets.js";
 
 const AllAppointment = () => {
   const { aToken, appointments, getAppointmentData, cancelAppointment } =
@@ -30,7 +31,7 @@ const AllAppointment = () => {
         </div>
 
         {/* Table Rows */}
-        {appointments?.map((item, index) => (
+        {appointments?.slice().reverse().map((item, index) => (
           <div
             key={index}
             className="flex flex-wrap justify-between items-center max-sm:gap-2 sm:grid sm:grid-cols-[0.5fr_1fr_0.8fr_1.4fr_1fr_1fr_1fr] text-gray-700 py-3 px-6 border-b hover:bg-gray-50 gap-4"
@@ -75,7 +76,7 @@ const AllAppointment = () => {
                 <p className="text-red-500 font-medium">Cancelled</p>
                : item.isComplete ? 
                 <p className="text-green-500 font-medium">Completed</p>
-                :<img onClick={()=>cancelAppointment(item._id)} className="w-10 cursor-pointer"/>
+                :<img onClick={()=>cancelAppointment(item._id)}  src={assets.cancel_icon}className="w-10 cursor-pointer"/>
               }
             </div>
           </div>
